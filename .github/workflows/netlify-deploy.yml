@@ -1,0 +1,20 @@
+name: Netlify Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Trigger Netlify Build
+        run: |
+          curl -X POST ${{ secrets.NETLIFY_DEPLOY_HOOK }} \
+            -H "Content-Type: application/json" \
+            -d '{"trigger_title":"GitHub Auto-Deploy"}'
+        env:
+          NETLIFY_DEPLOY_HOOK: https://api.netlify.com/build_hooks/69e283791e63d9282cb3ce9e
