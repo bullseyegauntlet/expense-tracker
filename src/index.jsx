@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import useExpenses from './hooks/useExpenses';
 import AddExpenseForm from './components/AddExpenseForm';
+import EditExpenseForm from './components/EditExpenseForm';
 import ExpenseList from './components/ExpenseList';
 import Dashboard from './components/Dashboard';
 import './styles/index.css';
 
 function App() {
-  const { expenses, addExpense, deleteExpense, getTotalByCategory, getRecentExpenses } = useExpenses();
+  const { expenses, addExpense, updateExpense, deleteExpense, getTotalByCategory, getRecentExpenses } = useExpenses();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
 
   const handleAddExpense = async (formData) => {
     setIsSubmitting(true);
@@ -19,6 +21,31 @@ function App() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleEditExpense = (expense) => {
+    setEditingExpense(expense);
+  };
+
+  const handleSaveEdit = async (updatedData) => {
+    setIsSubmitting(true);
+    try {
+      // Simulate async operation (can be replaced with actual API call)
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      updateExpense(updatedData.id, {
+        amount: updatedData.amount,
+        category: updatedData.category,
+        date: updatedData.date,
+        note: updatedData.note,
+      });
+      setEditingExpense(null);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingExpense(null);
   };
 
   const totalByCategory = getTotalByCategory();
@@ -38,10 +65,18 @@ function App() {
           <div className="lg:col-span-2">
             <Dashboard expenses={recentExpenses} totalByCategory={totalByCategory} />
             <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Expenses</h2>
-            <ExpenseList expenses={recentExpenses} onDelete={deleteExpense} />
+            <ExpenseList expenses={recentExpenses} onDelete={deleteExpense} onEdit={handleEditExpense} />
           </div>
         </div>
       </div>
+      {editingExpense && (
+        <EditExpenseForm
+          expense={editingExpense}
+          onSubmit={handleSaveEdit}
+          onCancel={handleCancelEdit}
+          isSubmitting={isSubmitting}
+        />
+      )}
     </div>
   );
 }

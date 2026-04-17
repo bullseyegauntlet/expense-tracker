@@ -67,11 +67,39 @@ const useExpenses = () => {
     return totals;
   };
 
+  const updateExpense = (id, data) => {
+    // Validate amount > 0
+    if (!data.amount || parseFloat(data.amount) <= 0) {
+      throw new Error('Amount must be greater than 0');
+    }
+
+    // Validate category is selected
+    if (!data.category || data.category.trim() === '') {
+      throw new Error('Category must be selected');
+    }
+
+    // Update expense in state
+    setExpenses((prevExpenses) =>
+      prevExpenses.map((expense) =>
+        expense.id === id
+          ? {
+              ...expense,
+              amount: parseFloat(data.amount),
+              category: data.category,
+              date: data.date,
+              note: data.note || '',
+            }
+          : expense
+      )
+    );
+  };
+
   return {
     expenses,
     addExpense,
     getRecentExpenses,
     deleteExpense,
+    updateExpense,
     getTotalByCategory,
   };
 };

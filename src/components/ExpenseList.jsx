@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ExpenseList = ({ expenses, onDelete }) => {
+const ExpenseList = ({ expenses, onDelete, onEdit }) => {
   if (expenses.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -46,7 +46,7 @@ const ExpenseList = ({ expenses, onDelete }) => {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Category</th>
                 <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">Amount</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Note</th>
-                <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">Action</th>
+                <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 max-h-96 overflow-y-auto block">
@@ -64,7 +64,13 @@ const ExpenseList = ({ expenses, onDelete }) => {
                   <td className="px-4 py-3 text-sm text-gray-600 truncate flex-1" title={expense.note}>
                     {truncateNote(expense.note)}
                   </td>
-                  <td className="px-4 py-3 text-center text-sm w-20">
+                  <td className="px-4 py-3 text-center text-sm w-32">
+                    <button
+                      onClick={() => onEdit(expense)}
+                      className="text-blue-500 hover:text-blue-700 font-medium text-xs transition-colors mr-3"
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => onDelete(expense.id)}
                       className="text-red-500 hover:text-red-700 font-medium text-xs transition-colors"
@@ -99,12 +105,20 @@ const ExpenseList = ({ expenses, onDelete }) => {
               {expense.note && (
                 <p className="text-sm text-gray-600 mb-3 truncate">{truncateNote(expense.note)}</p>
               )}
-              <button
-                onClick={() => onDelete(expense.id)}
-                className="text-red-500 hover:text-red-700 font-medium text-xs transition-colors"
-              >
-                Delete
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => onEdit(expense)}
+                  className="text-blue-500 hover:text-blue-700 font-medium text-xs transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => onDelete(expense.id)}
+                  className="text-red-500 hover:text-red-700 font-medium text-xs transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
