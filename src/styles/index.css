@@ -20,3 +20,40 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Expense List Scrollable Container */
+.expense-list-container {
+  max-height: 24rem; /* 96 * 0.25rem = 384px (6 items visible at ~64px each) */
+  overflow-y: auto;
+  border-radius: 0.5rem;
+}
+
+.expense-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.expense-list-container::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+}
+
+.expense-list-container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 0.5rem;
+}
+
+.expense-list-container::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Table row styling for better spacing */
+.expense-row {
+  display: table-row;
+  width: 100%;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.expense-row:hover {
+  background-color: #f9fafb;
+  transition: background-color 0.15s ease;
+}

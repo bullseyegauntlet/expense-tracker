@@ -7,7 +7,7 @@ import Dashboard from './components/Dashboard';
 import './styles/index.css';
 
 function App() {
-  const { expenses, addExpense, deleteExpense, getTotalByCategory } = useExpenses();
+  const { expenses, addExpense, deleteExpense, getTotalByCategory, getRecentExpenses } = useExpenses();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddExpense = async (formData) => {
@@ -22,7 +22,7 @@ function App() {
   };
 
   const totalByCategory = getTotalByCategory();
-  const recentExpenses = expenses;
+  const recentExpenses = getRecentExpenses(10);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
