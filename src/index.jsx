@@ -5,12 +5,14 @@ import AddExpenseForm from './components/AddExpenseForm';
 import EditExpenseForm from './components/EditExpenseForm';
 import ExpenseList from './components/ExpenseList';
 import Dashboard from './components/Dashboard';
+import SettingsScreen from './components/SettingsScreen';
 import './styles/index.css';
 
 function App() {
-  const { expenses, addExpense, updateExpense, deleteExpense, getTotalByCategory, getRecentExpenses } = useExpenses();
+  const { expenses, addExpense, updateExpense, deleteExpense, getTotalByCategory, getRecentExpenses, getCategories, addCategory, deleteCategory } = useExpenses();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [currentScreen, setCurrentScreen] = useState('dashboard'); // 'dashboard', 'addExpense', 'settings'
 
   const handleAddExpense = async (formData) => {
     setIsSubmitting(true);
@@ -50,24 +52,81 @@ function App() {
 
   const totalByCategory = getTotalByCategory();
   const recentExpenses = getRecentExpenses(10);
+  const categories = getCategories();
+
+  const renderContent = () => {
+    switch (currentScreen) {
+      case 'addExpense':
+        return (
+          <div className="max-w-md mx-auto">
+            <AddExpenseForm onSubmit={handleAddExpense} isSubmitting={isSubmitting} categories={categories} />
+          </div>
+        );
+      case 'settings':
+        return (
+          <div className="max-w-2xl mx-auto">
+            <SettingsScreen categories={categories} onAddCategory={addCategory} onDeleteCategory={deleteCategory} />
+          </div>
+        );
+      case 'dashboard':
+      default:
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <AddExpenseForm onSubmit={handleAddExpense} isSubmitting={isSubmitting} categories={categories} />
+            </div>
+
+            <div className="lg:col-span-2">
+              <Dashboard expenses={recentExpenses} totalByCategory={totalByCategory} />
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Expenses</h2>
+              <ExpenseList expenses={recentExpenses} onDelete={deleteExpense} onEdit={handleEditExpense} />
+            </div>
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Expense Tracker</h1>
-        <p className="text-gray-600 mb-8">Track your spending and manage your budget</p>
+        <p className="text-gray-600 mb-6">Track your spending and manage your budget</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            <AddExpenseForm onSubmit={handleAddExpense} isSubmitting={isSubmitting} />
-          </div>
-
-          <div className="lg:col-span-2">
-            <Dashboard expenses={recentExpenses} totalByCategory={totalByCategory} />
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Expenses</h2>
-            <ExpenseList expenses={recentExpenses} onDelete={deleteExpense} onEdit={handleEditExpense} />
-          </div>
+        {/* Navigation Tabs */}
+        <div className="flex gap-2 mb-8 border-b border-gray-300">
+          <button
+            onClick={() => setCurrentScreen('dashboard')}
+            className={`py-2 px-4 font-medium transition duration-200 ${
+              currentScreen === 'dashboard'
+                ? 'border-b-2 border-blue-500 text-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Dashboard
+          </button>
+          <button
+            onClick={() => setCurrentScreen('addExpense')}
+            className={`py-2 px-4 font-medium transition duration-200 ${
+              currentScreen === 'addExpense'
+                ? 'border-b-2 border-blue-500 text-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Add Expense
+          </button>
+          <button
+            onClick={() => setCurrentScreen('settings')}
+            className={`py-2 px-4 font-medium transition duration-200 ${
+              currentScreen === 'settings'
+                ? 'border-b-2 border-blue-500 text-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Settings
+          </button>
         </div>
+
+        {renderContent()}
       </div>
       {editingExpense && (
         <EditExpenseForm

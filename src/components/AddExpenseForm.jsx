@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 
-const AddExpenseForm = ({ onSubmit, isSubmitting = false }) => {
+const AddExpenseForm = ({ onSubmit, isSubmitting = false, categories = ['Food', 'Transport', 'Rent', 'Entertainment', 'Other'] }) => {
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('Food');
+  const [category, setCategory] = useState(categories[0] || 'Food');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
-
-  const categories = ['Food', 'Transport', 'Rent', 'Entertainment', 'Other'];
 
   const handleSubmit = (e) => {
     e.preventDefault();
