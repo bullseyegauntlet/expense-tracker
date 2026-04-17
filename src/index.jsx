@@ -5,11 +5,26 @@ import AddExpenseForm from './components/AddExpenseForm';
 import EditExpenseForm from './components/EditExpenseForm';
 import ExpenseList from './components/ExpenseList';
 import Dashboard from './components/Dashboard';
+import MonthSelector from './components/MonthSelector';
 import SettingsScreen from './components/SettingsScreen';
 import './styles/index.css';
 
 function App() {
-  const { expenses, addExpense, updateExpense, deleteExpense, getTotalByCategory, getRecentExpenses, getCategories, addCategory, deleteCategory } = useExpenses();
+  const { 
+    expenses, 
+    addExpense, 
+    updateExpense, 
+    deleteExpense, 
+    getTotalByCategory, 
+    getRecentExpenses, 
+    getCategories, 
+    addCategory, 
+    deleteCategory,
+    monthFilter,
+    setMonthFilter,
+    getExpensesForMonth,
+    getTotalForMonth
+  } = useExpenses();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
   const [currentScreen, setCurrentScreen] = useState('dashboard'); // 'dashboard', 'addExpense', 'settings'
@@ -53,6 +68,10 @@ function App() {
   const totalByCategory = getTotalByCategory();
   const recentExpenses = getRecentExpenses(10);
   const categories = getCategories();
+  
+  // Get expenses and total for the selected month
+  const monthExpenses = getExpensesForMonth(monthFilter);
+  const monthTotal = getTotalForMonth(monthFilter);
 
   const renderContent = () => {
     switch (currentScreen) {
@@ -71,17 +90,25 @@ function App() {
       case 'dashboard':
       default:
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
-              <AddExpenseForm onSubmit={handleAddExpense} isSubmitting={isSubmitting} categories={categories} />
-            </div>
+          <>
+            <MonthSelector selectedMonth={monthFilter} onMonthChange={setMonthFilter} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-1">
+                <AddExpenseForm onSubmit={handleAddExpense} isSubmitting={isSubmitting} categories={categories} />
+              </div>
 
-            <div className="lg:col-span-2">
-              <Dashboard expenses={recentExpenses} totalByCategory={totalByCategory} />
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Expenses</h2>
-              <ExpenseList expenses={recentExpenses} onDelete={deleteExpense} onEdit={handleEditExpense} />
+              <div className="lg:col-span-2">
+                <Dashboard 
+                  expenses={recentExpenses} 
+                  totalByCategory={totalByCategory}
+                  monthExpenses={monthExpenses}
+                  monthTotal={monthTotal}
+                />
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Expenses for {monthFilter.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h2>
+                <ExpenseList expenses={monthExpenses} onDelete={deleteExpense} onEdit={handleEditExpense} />
+              </div>
             </div>
-          </div>
+          </>
         );
     }
   };

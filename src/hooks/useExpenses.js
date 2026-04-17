@@ -5,6 +5,7 @@ const PRESET_CATEGORIES = ['Food', 'Transport', 'Rent', 'Entertainment', 'Other'
 const useExpenses = () => {
   const [expenses, setExpenses] = useState([]);
   const [settings, setSettings] = useState({ categories: [...PRESET_CATEGORIES] });
+  const [monthFilter, setMonthFilter] = useState(new Date());
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -147,6 +148,21 @@ const useExpenses = () => {
     return settings.categories;
   };
 
+  const getExpensesForMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    return expenses.filter((expense) => {
+      const expenseDate = new Date(expense.date);
+      return expenseDate.getFullYear() === year && expenseDate.getMonth() === month;
+    });
+  };
+
+  const getTotalForMonth = (date) => {
+    const monthExpenses = getExpensesForMonth(date);
+    return monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+  };
+
   return {
     expenses,
     addExpense,
@@ -157,6 +173,10 @@ const useExpenses = () => {
     addCategory,
     deleteCategory,
     getCategories,
+    monthFilter,
+    setMonthFilter,
+    getExpensesForMonth,
+    getTotalForMonth,
   };
 };
 
