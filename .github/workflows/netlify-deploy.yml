@@ -13,8 +13,6 @@ jobs:
       
       - name: Trigger Netlify Build
         run: |
-          curl -X POST ${{ secrets.NETLIFY_DEPLOY_HOOK }} \
+          curl -X POST https://api.netlify.com/build_hooks/69e283791e63d9282cb3ce9e \
             -H "Content-Type: application/json" \
             -d '{"trigger_title":"GitHub Auto-Deploy"}'
-        env:
-          NETLIFY_DEPLOY_HOOK: https://api.netlify.com/build_hooks/69e283791e63d9282cb3ce9e
