@@ -1,6 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const ExpenseList = ({ expenses, onDelete, onEdit }) => {
+  const [confirmDelete, setConfirmDelete] = useState(null);
+
+  const handleDeleteClick = (expense) => {
+    setConfirmDelete(expense);
+  };
+
+  const handleConfirmDelete = () => {
+    if (confirmDelete) {
+      onDelete(confirmDelete.id);
+      setConfirmDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmDelete(null);
+  };
+
   if (expenses.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -72,7 +89,7 @@ const ExpenseList = ({ expenses, onDelete, onEdit }) => {
                       Edit
                     </button>
                     <button
-                      onClick={() => onDelete(expense.id)}
+                      onClick={() => handleDeleteClick(expense)}
                       className="text-red-500 hover:text-red-700 font-medium text-xs transition-colors"
                     >
                       Delete
@@ -113,7 +130,7 @@ const ExpenseList = ({ expenses, onDelete, onEdit }) => {
                   Edit
                 </button>
                 <button
-                  onClick={() => onDelete(expense.id)}
+                  onClick={() => handleDeleteClick(expense)}
                   className="text-red-500 hover:text-red-700 font-medium text-xs transition-colors"
                 >
                   Delete
@@ -123,6 +140,32 @@ const ExpenseList = ({ expenses, onDelete, onEdit }) => {
           ))}
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-4/5">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Expense?</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this expense? <strong>${confirmDelete.amount.toFixed(2)}</strong> from <strong>{confirmDelete.category}</strong>. This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={handleCancelDelete}
+                className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md font-medium text-sm transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md font-medium text-sm transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
